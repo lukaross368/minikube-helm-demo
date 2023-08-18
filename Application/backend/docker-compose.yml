@@ -1,0 +1,35 @@
+version: "3"
+services:
+
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    ports:
+      - "5432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+
+  django:
+    build: .
+    command:
+      - sh
+      - -c
+      - |
+        python manage.py migrate
+        python manage.py seed_db
+        python manage.py create_superuser
+        python manage.py runserver 0.0.0.0:8000
+
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    links:
+      - postgres
