@@ -21,13 +21,16 @@ function App() {
         method: 'POST',
         body: JSON.stringify({ name, age, email }),
       });
+
+      const responseData = await response.json();
+
       if (response.ok) {
-        // Handle success or display an appropriate message
-        console.log('Data submitted successfully');
-        setSubmitMessage('Data submitted successfully');
-        console.log(`Backend Returned ${JSON.stringify(response)}`)
+        console.log(`Data submitted successfully! ${JSON.stringify(responseData.data)}`);
+        setSubmitMessage(`Data submitted and entered into the Database successfully! The UUID attached to your row is: ${JSON.stringify(responseData.data)}`);
+        console.log(`Backend Returned ${JSON.stringify(responseData)}`)
       } else {
         console.log(`Backend Returned ${JSON.stringify(response)}`)
+        setSubmitMessage(`Error submitting data, backend returned ${JSON.stringify(response.status)}`);
       }
     } catch (error) {
         console.error('Error submitting data');
@@ -44,14 +47,20 @@ function App() {
       setFetchMessage(`Data fetched successfully!`);
       console.log(`Backend Returned ${JSON.stringify(response)}`)
     } catch (error) {
-      setUuidResponse('');
-      setFetchMessage(`Error fetching data ${error}`);
+      if (error instanceof SyntaxError && error.message.includes('Unexpected token')) {
+        setUuidResponse('');
+        setFetchMessage('Please enter a valid UUID');
+      } else {
+        setUuidResponse('');
+        setFetchMessage(`Error fetching data ${error}`);
+      }
     }
   };
 
     return (
     <div>
       <section>
+        <div className="form-container">
         <h2>Submit Data</h2>
         <form onSubmit={handleSubmit}>
           <div>
@@ -69,9 +78,11 @@ function App() {
           <button type="submit">Submit</button>
         </form>
         <p>{submitMessage}</p>
+        </div>
       </section>
 
       <section>
+        <div className="form-container">
         <h2>Get Data by UUID</h2>
         <form onSubmit={handleGet}>
           <div>
@@ -82,11 +93,14 @@ function App() {
         </form>
         {uuidResponse && (
         <div>
-          <p>Row in the DB with that UUID is: </p>
+          <p>Data fetched successfully! Row in the DB with that UUID is: </p>
           <pre>{JSON.stringify(uuidResponse, null, 2)}</pre>
         </div>
       )}
-        <p>{fetchMessage}</p>
+        {!uuidResponse && (
+          <p>{fetchMessage}</p>
+        )}
+        </div>
       </section>
     </div>
   );

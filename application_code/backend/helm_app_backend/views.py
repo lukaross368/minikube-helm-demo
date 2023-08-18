@@ -3,21 +3,27 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 import json
+import uuid as universal_id
 
 @csrf_exempt
 def create_person(request):
     if request.method == 'POST':
         try:
+            random_uuid = universal_id.uuid4()
+            
             data = json.loads(request.body)
             name = data['name']
             age = data['age']
             email = data['email']
 
-            person = People(name=name, age=age, email=email)
+            person = People(uuid=random_uuid, name=name, age=age, email=email)
             person.save()
 
-            response_data = {'message': 'Person created successfully'}
-            return JsonResponse(response_data, status=201)
+            response_data = {
+                'message': 'Person created successfully',
+                'data': str(random_uuid)
+            }
+            return JsonResponse(response_data , status=201)
         except Exception as e:
             error_data = {'error': str(e)}
             return JsonResponse(error_data, status=400)
