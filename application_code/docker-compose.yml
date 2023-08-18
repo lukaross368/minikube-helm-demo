@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile.postgres
     ports:
       - "5432:5432"
-    tmpfs:
-      - /var/lib/postgresql/data
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
@@ -22,9 +20,9 @@ services:
       - -c
       - |
         cd backend
+        echo "Waiting for PostgreSQL to start..."
+        sleep 10
         python manage.py migrate
-        python manage.py seed_db
-        python manage.py create_superuser
         python manage.py runserver 0.0.0.0:8000
 
     volumes:
@@ -39,8 +37,17 @@ services:
   react:
       build:
         context: frontend
-      command: npm start
+      command:
+        - sh
+        - -c
+        - |
+          cd frontend
+          sleep 10
+          echo "Waiting for Backend to start..."
+          npm start
       volumes:
-        - ./frontend:/app
+        - .:/app
+      depends_on:
+        - django
       ports:
         - "3000:3000"
