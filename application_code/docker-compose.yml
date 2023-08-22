@@ -1,17 +1,6 @@
 version: "3"
 services:
 
-  postgres:
-    build:
-      context: backend
-      dockerfile: Dockerfile.postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-
   django:
     build:
       context: backend
@@ -20,34 +9,31 @@ services:
       - -c
       - |
         cd backend
-        echo "Waiting for PostgreSQL to start..."
-        sleep 10
         python manage.py migrate
         python manage.py runserver 0.0.0.0:8000
-
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    depends_on:
-      - postgres
-    links:
-      - postgres
 
   react:
-      build:
-        context: frontend
-      command:
-        - sh
-        - -c
-        - |
-          cd frontend
-          sleep 10
-          echo "Waiting for Backend to start..."
-          npm start
-      volumes:
-        - .:/app
-      depends_on:
-        - django
-      ports:
-        - "3000:3000"
+    build:
+      context: frontend
+    command:
+      - sh
+      - -c
+      - |
+        cd frontend
+        npm start
+    volumes:
+      - .:/app
+    depends_on:
+      - django
+    ports:
+      - "3000:3000"

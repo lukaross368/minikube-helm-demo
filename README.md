@@ -8,9 +8,9 @@ I have set the following requirements
 ### Web App Setup
 
 - Simple React Database UI App Connected to a Django Backend
-- Django is talking to containerised postgres DB
-- All three services running in docker containers (spin up locally with docker compose file)
-- To Run the App and test locally just run `docker-compose up --build`
+- Django is set up to talk Postgres permanent storage
+- To Run the App and test locally just run replace the placeholders in the
+  docker-compose.yaml file with your postgresql db credentials and run `docker-compose up --build`
 
 ### Kubernetes setup
 - Database deployed with stateful set and making sure data is persisted to a volume

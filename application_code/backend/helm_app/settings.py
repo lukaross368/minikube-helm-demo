@@ -59,11 +59,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
-
-# Allow cookies to be included in CORS requests (if needed)
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'helm_app.urls'
@@ -90,14 +86,16 @@ WSGI_APPLICATION = 'helm_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mydb',  # Choose a suitable name for your database
-        'USER': 'myuser',  # Replace with a PostgreSQL username
-        'PASSWORD': 'mypassword',  # Replace with a strong password
-        'HOST': 'postgres',  # This will be the name of the PostgreSQL service in Docker Compose
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 

@@ -1,4 +1,4 @@
-#!/home/luka/training/k8sTraining/minikube-helm-demo/Application/backend/venv/bin/python3
+#!/home/luka/training/k8sTraining/minikube-helm-demo/application_code/backend/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

@@ -43,8 +43,13 @@ function App() {
     try {
       const response = await fetch(`http://${BASE_HOST}/getPerson/${uuid}`);
       const data = await response.json();
-      setUuidResponse(data);
-      setFetchMessage(`Data fetched successfully!`);
+      if ('error' in data && data['error'] === 'Person not found') {
+        setUuidResponse(null)
+        setFetchMessage("No person found in the Database with that UUID")
+      } else {
+        setUuidResponse(data);
+        setFetchMessage(`Data fetched successfully!`);
+      }
       console.log(`Backend Returned ${JSON.stringify(response)}`)
     } catch (error) {
       if (error instanceof SyntaxError && error.message.includes('Unexpected token')) {
