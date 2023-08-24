@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-9f*r2@3kmp&nw&(4g=#!r$q6(y6*8)d1qv6aikyr$d=q0iv3x@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['backend-service','frontend-service','localhost']
 
 
 # Application definition
@@ -61,6 +61,23 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",  # Include OPTIONS for preflight requests
+]
+CORS_ALLOW_HEADERS = [
+    "Accept",
+    "Accept-Language",
+    "Content-Language",
+    "Content-Type",
+    "Authorization",
+    "Custom-Header",  # Add your custom headers here
+]
 
 ROOT_URLCONF = 'helm_app.urls'
 

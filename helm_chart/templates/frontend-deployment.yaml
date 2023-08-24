@@ -1,35 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: {{ .Release.Name }}-frontend-deployment
   labels:
     app: frontend
 
 spec:
   selector:
     matchLabels:
-      app: frontend-deployment
+      app: {{ .Release.Name }}-frontend-deployment
   replicas: 1
   template:
     metadata:
       labels:
-        app: frontend-deployment
+        app: {{ .Release.Name }}-frontend-deployment
     spec:
       containers:
         - name: frontend
-          image: lukaross123/helm-app:frontend-1.0
+          image: {{ .Values.frontend.image }}
           ports:
-            - containerPort: 3000
+            - containerPort: {{ .Values.frontend.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-frontend-configmap
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
+  name: {{ .Release.Name }}-frontend-service
 spec:
   selector:
-    app: frontend-deployment
+    app: {{ .Release.Name }}-frontend-deployment
   type: NodePort
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 3000
+      targetPort: {{ .Values.frontend.port }}

@@ -3,7 +3,9 @@ import React, {useState} from "react";
 
 function App() {
 
-  const BASE_HOST = 'localhost:8000'
+  const BASE_HOST = process.env.REACT_APP_BASE_HOST;
+  const HOST_PORT = process.env.REACT_APP_HOST_PORT;
+  const ORIGIN_HOST_NAME = process.env.ORIGIN_HOST;
 
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -17,7 +19,11 @@ function App() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`http://${BASE_HOST}/createPerson/`, {
+      const response = await fetch(`http://${BASE_HOST}:${HOST_PORT}/backend/createPerson/`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": `http://${ORIGIN_HOST_NAME}/`,
+        },
         method: 'POST',
         body: JSON.stringify({ name, age, email }),
       });
@@ -41,7 +47,13 @@ function App() {
   const handleGet = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`http://${BASE_HOST}/getPerson/${uuid}`);
+      const response = await fetch(`http://${BASE_HOST}:${HOST_PORT}/backend/getPerson/${uuid}/`,{
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": `http://${ORIGIN_HOST_NAME}/`,
+        },
+      });
       const data = await response.json();
       if ('error' in data && data['error'] === 'Person not found') {
         setUuidResponse(null)

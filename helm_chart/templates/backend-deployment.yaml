@@ -1,66 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: {{ .Release.Name }}-backend-deployment
   labels:
     app: backend
 
 spec:
   selector:
     matchLabels:
-      app: backend-deployment
+      app: {{ .Release.Name }}-backend-deployment
   replicas: 1
   template:
     metadata:
       labels:
-        app: backend-deployment
+        app: {{ .Release.Name }}-backend-deployment
     spec:
       containers:
         - name: backend
-          image: lukaross123/helm-app:backend-1.2
+          image: {{ .Values.backend.image }}
           ports:
-            - containerPort: 8000
-          env:
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_NAME
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_PASSWORD
-            - name: DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_HOST
-            - name: DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: DB_PORT
+            - containerPort: {{ .Values.backend.port }}
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-backend-secrets
 
-          command: [ "sh", "-c" ]
+          command: ["sh", "-c"]
           args:
             - |
               python manage.py migrate
-              python manage.py runserver 0.0.0.0:8000
+              python manage.py runserver 0.0.0.0:{{ .Values.backend.port }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-service
+  name: {{ .Release.Name }}-backend-service
 spec:
   selector:
-    app: backend-deployment
+    app: {{ .Release.Name }}-backend-deployment
+  type: NodePort
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: {{ .Values.backend.port }}
+      targetPort: {{ .Values.backend.port }}

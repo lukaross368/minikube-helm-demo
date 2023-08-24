@@ -20,7 +20,7 @@ from helm_app_backend.views import create_person, get_person, home_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('createPerson/', create_person, name='create-person'),
+    path('backend/createPerson/', create_person, name='create-person'),
     path('', home_view, name='home'),
-    path('getPerson/<uuid:uuid>/', get_person, name='get-person'),
+    path('backend/getPerson/<uuid:uuid>/', get_person, name='get-person'),
 ]

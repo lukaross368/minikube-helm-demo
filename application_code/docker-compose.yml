@@ -25,6 +25,10 @@ services:
   react:
     build:
       context: frontend
+    environment:
+      - REACT_APP_BASE_HOST=localhost
+      - REACT_APP_HOST_PORT=8000
+      - ORIGIN_HOST_NAME=localhost
     command:
       - sh
       - -c
